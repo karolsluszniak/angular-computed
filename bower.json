@@ -1,0 +1,25 @@
+{
+  "name": "angular-computed",
+  "main": "angular-computed.js",
+  "version": "1.1.0",
+  "homepage": "https://github.com/karolsluszniak/angular-computed",
+  "authors": [
+    "Karol Sluszniak <ksluszniak@gmail.com>"
+  ],
+  "description": "Elegant AngularJS implementation of the computed property concept",
+  "keywords": [
+    "angular",
+    "computed",
+    "property",
+    "properties",
+    "computed-property",
+    "computed-properties",
+    "watch",
+    "$computed",
+    "$watch"
+  ],
+  "license": "MIT",
+  "ignore": [
+    ".jshintrc"
+  ]
+}
