@@ -1,33 +1,39 @@
-(function() { 'use strict';
-  angular.module('ngComputed', []).run(['$rootScope', function($rootScope) {
-    var STRIP_COMMENTS = /((\/\/.*$)|(\/\*[\s\S]*?\*\/))/mg;
-    var ARGUMENT_NAMES = /([^\s,]+)/g;
+(function() {'use strict';
+  angular.module('ngComputed', []).
 
-    function getParamNames(func) {
-      var fnStr = func.toString().replace(STRIP_COMMENTS, '');
-      var result = fnStr.slice(fnStr.indexOf('(')+1, fnStr.indexOf(')')).match(ARGUMENT_NAMES);
-      if (result === null) {
-        result = [];
+  service('$computed', ['$rootScope', function($rootScope) {
+    return function angularCmputed(context, name, properties) {
+      /* computed(this) in controller injects service into the controller context */
+      if (typeof context === 'object' && name === undefined) {
+        context.$computed = angularCmputed;
+        return;
       }
 
-      return result;
-    };
-
-    function defineProperty(name, inject) {
-      if (typeof inject === 'function') {
-        var dependencies = getParamNames(inject);
-        var compute = inject;
-      } else {
-        var dependencies = inject.slice(0, inject.length - 1);
-        var compute = inject[inject.length - 1];
+      /* computed(name, properties) uses this for context */
+      if (typeof context === 'string') {
+        properties = name;
+        name       = context;
+        context    = this;
       }
 
-      this.$watchGroup(dependencies, function(newVal, oldVal, scope) {
-        scope[name] = compute.apply(scope, newVal);
+      /* last element in properties array is a compute function */
+      var valueFunc = properties.splice(properties.length - 1)[0];
+
+      /* watch a group of specified properties and evaluate compute function */
+      $rootScope.$watchGroup(properties.map(function(item) {
+        if (typeof item === 'string') {
+          return function() { return context[item]; };
+        } else if (typeof item === 'function') {
+          return angular.bind(context, item);
+        }
+      }), function() {
+        context[name] = valueFunc.apply(context, arguments[0], arguments[1]);
       });
     };
+  }]).
 
-    $rootScope.constructor.prototype.$computed = defineProperty;
+  /* provide scope.$computed(name, properties) on all scopes */
+  run(['$rootScope', '$computed', function($rootScope, $computed) {
+    $computed($rootScope);
   }]);
 })();
-
