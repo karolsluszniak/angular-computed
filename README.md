@@ -2,8 +2,9 @@
 
 Computed property concept allows to produce more efficient and elegant scope properties. With **$computed** you get an easy way to define them using pattern similar to Dependency Injection, well known to all Angular developers. Here are some advantages:
 
-- views are simplified as you can use properties instead of function calls
-- efficiency is gained as computation function is invoked only once after variable change
+- property computation is executed just once after input change
+- property computation is executed just once even if property is used in multipe places
+- views are simplified with `{{ var }}` instead of `{{ computeVar() }}`
 - computed properties are visually separated in controller code
 - definition syntax is consistent with core Angular concepts
 
@@ -11,7 +12,7 @@ Internally, **$computed** is very simple and mostly based on `$watch` ability of
 
 ## Usage
 
-First off, add `angular-computed.js` file to your project. You can download it from [here](https://raw.githubusercontent.com/karolsluszniak/angular-computed/master/angular-computed.js) or require bower `angular-computed` package.
+First off, add **angular-computed.js** file to your project. You can download it from [here](https://raw.githubusercontent.com/karolsluszniak/angular-computed/master/angular-computed.js) or require bower `angular-computed` package.
 
 Then, add `ngComputed` as your app's dependency:
 
@@ -105,7 +106,7 @@ Guessing variable names from function signature, like Angular does in its DI, is
 
 ### Dependency chain
 
-You can add computed properties that are dependent on other computed properties. In fact, this is where **$computed** really starts to shine with its performance benefits.
+You can add computed properties that are dependent on other computed properties. In fact, this is where the pattern implemented by **$computed** really starts to shine with its performance benefits.
 
 ```js
 app.controller('AppCtrl', ['$computed', function($computed) {
@@ -124,6 +125,15 @@ app.controller('AppCtrl', ['$computed', function($computed) {
   }]);
 }]);
 ```
+
+Imagine something like this happens later in controller lifecycle:
+
+```js
+this.a = this.a + 1;
+this.b = this.b - 1;
+```
+
+The `sum` property will be recomputed due to input change but its result will not change and thus the `sumPow` property will not have to be recomputed.
 
 ## Contributing
 

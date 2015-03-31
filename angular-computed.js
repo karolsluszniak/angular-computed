@@ -27,7 +27,7 @@
           return angular.bind(context, item);
         }
       }), function() {
-        context[name] = valueFunc.apply(context, arguments[0], arguments[1]);
+        context[name] = valueFunc.apply(context, arguments[0]);
       });
     };
   }]).
