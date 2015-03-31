@@ -1,21 +1,25 @@
 # angular-computed
 
-Computed property concept allows to produce more efficient and elegant scope properties. With **angular-computed** you get an easy way to define them using pattern similar to Dependency Injection, well known to all angular developers. Here are some advantages:
+Computed property concept allows to produce more efficient and elegant scope properties. With **$computed** you get an easy way to define them using pattern similar to Dependency Injection, well known to all angular developers. Here are some advantages:
 
 - views are simplified as you can use properties instead of function calls
 - efficiency is gained as computation function is invoked only once after variable change
-- computed properties are visually separated in controllers
-- definition syntax is consistent with core angular concepts
+- computed properties are visually separated in controller code
+- definition syntax is consistent with core Angular concepts
+
+Internally, **$computed** is very simple and mostly based on `$watch` ability of Angular Scope. It's just a tiny, clean pattern implementation.
 
 ## Usage
 
-First off, add `ngComputed` as your app's dependency.
+First off, add `angular-computed.js` file to your project. You can download it from [here](https://raw.githubusercontent.com/karolsluszniak/angular-computed/master/angular-computed.js) or require bower `angular-computed` package.
+
+Then, add `ngComputed` as your app's dependency:
 
 ```js
 var app = angular.module('app', ['ngComputed']);
 ```
 
-**angular-computed** works both with `controller as` syntax introduced in *angular 1.2* and with explicit `$scope` in controllers.
+**$computed** works both with `controller as` syntax introduced in Angular 1.2 and with explicit `$scope` injected into controllers, services etc.
 
 ### With `controller as`
 
@@ -47,7 +51,7 @@ Then, you can use it in your view like this:
 
 ### With `$scope`
 
-Here's how to declare a computed property when you use `$scope` injection into controller, service, factory or whatever:
+Here's how to declare a computed property when you use `$scope` injection:
 
 ```js
 app.controller('AppCtrl', ['$scope', function($scope) {
@@ -75,34 +79,39 @@ Then, you can use it in your view like this:
 
 ### Defining dependencies
 
-You can provide dependencies as strings, like below:
+You can provide dependencies as strings with property names:
 
 ```js
   $computed(this, 'sum', ['a', 'b', computeFunc]);
 ```
 
-Or as functions, if you need to:
+Or, if you need more control, as functions:
 
 ```js
-  var local = 1;
+  this.nested = { num: 31 };
+
+  var local = 49;
+  var computeFunc = function(nestedNum, localNum) {
+    return nestedNum + localNum;
+  };
 
   $computed(this, 'sum', [
-    function() { return this.some.property; },
+    function() { return this.nested.num; },
     function() { return local; },
     computeFunc]);
 ```
 
-Guessing variable names from function signature, like angular does in its DI, is not supported here. It would not work after minification and create bugs in your code that are hard to debug.
+Guessing variable names from function signature, like Angular does in its DI, is not supported here. It would not work after minification and could create ugly bugs in your code.
 
 ### Dependency chain
 
-You can add computed properties that are dependent on other computed properties. In fact, this is where **angular-computed** really starts to shine with its performance benefits.
+You can add computed properties that are dependent on other computed properties. In fact, this is where **$computed** really starts to shine with its performance benefits.
 
 ```js
 app.controller('AppCtrl', ['$computed', function($computed) {
   // Input variables
-  this.a     = 15;
-  this.b     = 32;
+  this.a = 15;
+  this.b = 32;
 
   // Computed property
   $computed(this, 'sum', ['a', 'b', function(a, b) {
