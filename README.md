@@ -1,6 +1,6 @@
 # angular-computed
 
-Computed property concept allows to produce more efficient and elegant scope properties. With **$computed** you get an easy way to define them using pattern similar to Dependency Injection, well known to all angular developers. Here are some advantages:
+Computed property concept allows to produce more efficient and elegant scope properties. With **$computed** you get an easy way to define them using pattern similar to Dependency Injection, well known to all Angular developers. Here are some advantages:
 
 - views are simplified as you can use properties instead of function calls
 - efficiency is gained as computation function is invoked only once after variable change
