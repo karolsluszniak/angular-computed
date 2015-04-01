@@ -83,26 +83,46 @@ Then, you can use it in your view like this:
 You can provide dependencies as strings with property names:
 
 ```js
-  $computed(this, 'sum', ['a', 'b', computeFunc]);
+$computed(this, 'sum', ['a', 'b', computeFunc]);
 ```
 
 Or, if you need more control, as functions:
 
 ```js
-  this.nested = { num: 31 };
+this.nested = { num: 31 };
 
-  var local = 49;
-  var computeFunc = function(nestedNum, localNum) {
-    return nestedNum + localNum;
-  };
+var local = 49;
+var computeFunc = function(nestedNum, localNum) {
+  return nestedNum + localNum;
+};
 
-  $computed(this, 'sum', [
-    function() { return this.nested.num; },
-    function() { return local; },
-    computeFunc]);
+$computed(this, 'sum', [
+  function() { return this.nested.num; },
+  function() { return local; },
+  computeFunc]);
 ```
 
 Guessing variable names from function signature, like Angular does in its DI, is not supported here. It would not work after minification and could create ugly bugs in your code.
+
+### Computing the property
+
+Compute function gets called when any of its dependencies change. It takes all dependencies as arguments and should return new property value:
+
+```js
+$computed(scope, 'descriptionIsLong', ['description', function(description) {
+  return (description.length > 512);
+}]);
+```
+
+You can also return a promise from your compute function. This, for instance, makes it possible to use AJAX calls to compute your properties:
+
+```js
+$computed(scope, 'userName', ['userId', function(userId) {
+  return $http.get('/users/' + userId).then(function(response) {
+    return response.data.user.firstName + ' ' + response.data.user.lastName;
+  });
+}]);
+```
 
 ### Dependency chain
 

@@ -1,7 +1,7 @@
 (function() {'use strict';
   angular.module('ngComputed', []).
 
-  service('$computed', ['$rootScope', function($rootScope) {
+  service('$computed', ['$rootScope', '$q', function($rootScope, $q) {
     return function angularCmputed(context, name, properties) {
       /* computed(this) in controller injects service into the controller context */
       if (typeof context === 'object' && name === undefined) {
@@ -26,8 +26,12 @@
         } else if (typeof item === 'function') {
           return angular.bind(context, item);
         }
-      }), function() {
-        context[name] = valueFunc.apply(context, arguments[0]);
+      }), function(newValues) {
+        var promise = $q.when(valueFunc.apply(context, newValues));
+
+        promise.then(function(response) {
+          context[name] = response;
+        });
       });
     };
   }]).
