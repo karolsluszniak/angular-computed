@@ -17,7 +17,8 @@
       }
 
       /* last element in properties array is a compute function */
-      var valueFunc = properties.splice(properties.length - 1)[0];
+      var valueFunc = properties.splice(properties.length - 1)[0],
+          version = 0;
 
       /* watch a group of specified properties and evaluate compute function */
       $rootScope.$watchGroup(properties.map(function(item) {
@@ -27,10 +28,15 @@
           return angular.bind(context, item);
         }
       }), function(newValues) {
-        var promise = $q.when(valueFunc.apply(context, newValues));
+        var thisVer   = ++version,
+            valid     = function valid() { return thisVer === version; },
+            valueArgs = newValues.concat([valid]),
+            promise   = $q.when(valueFunc.apply(context, valueArgs));
 
         promise.then(function(response) {
-          context[name] = response;
+          if (valid()) {
+            context[name] = response;
+          }
         });
       });
     };

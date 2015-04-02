@@ -4,6 +4,7 @@ Computed property concept allows to produce more efficient and elegant scope pro
 
 - property computation is executed just once after input change
 - property computation is executed just once even if property is used in multipe places
+- property computation can make use of promises (e.g. compute property via API call)
 - views are simplified with `{{ var }}` instead of `{{ computeVar() }}`
 - computed properties are visually separated in controller code
 - definition syntax is consistent with core Angular concepts
@@ -90,11 +91,7 @@ Or, if you need more control, as functions:
 
 ```js
 this.nested = { num: 31 };
-
 var local = 49;
-var computeFunc = function(nestedNum, localNum) {
-  return nestedNum + localNum;
-};
 
 $computed(this, 'sum', [
   function() { return this.nested.num; },
@@ -119,7 +116,24 @@ You can also return a promise from your compute function. This, for instance, ma
 ```js
 $computed(scope, 'userName', ['userId', function(userId) {
   return $http.get('/users/' + userId).then(function(response) {
-    return response.data.user.firstName + ' ' + response.data.user.lastName;
+    return response.data.firstName + ' ' + response.data.lastName;
+  });
+}]);
+```
+
+**$computed** protects your async properties against race conditions. If input changes again before previous promise was resolved, the value returned by that previous promise will never get assigned to the property anymore.
+
+Your `.then()` callbacks will still execute, but there's a way to avoid it - by using a special `$valid` function injected for your convenience by **$computed**:
+
+```js
+$computed(scope, 'userName', ['userId', function(userId, $valid) {
+  return $http.get('/users/' + userId).then(function(response) {
+    if ($valid()) {
+      // imagine here a code you don't want to process for old promises
+      scope.userChangeCount += 1;
+    }
+
+    return response.data.firstName + ' ' + response.data.lastName;
   });
 }]);
 ```

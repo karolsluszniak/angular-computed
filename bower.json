@@ -1,7 +1,7 @@
 {
   "name": "angular-computed",
   "main": "angular-computed.js",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "homepage": "https://github.com/karolsluszniak/angular-computed",
   "authors": [
     "Karol Sluszniak <ksluszniak@gmail.com>"
@@ -18,8 +18,5 @@
     "$computed",
     "$watch"
   ],
-  "license": "MIT",
-  "ignore": [
-    ".jshintrc"
-  ]
+  "license": "MIT"
 }
