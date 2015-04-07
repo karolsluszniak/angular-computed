@@ -1,15 +1,15 @@
 # angular-computed
 
-Computed property concept allows to produce more efficient and elegant scope properties. With **$computed** you get an easy way to define them using pattern similar to Dependency Injection, well known to all Angular developers. Here are some advantages:
+Computed properties allow to produce efficient and elegant properties that are a result of some calculation dependent on other properties. With **$computed** you get an easy way to define them using pattern similar to Angular's Dependency Injection. Here are some advantages:
 
 - property computation is executed just once after input change
-- property computation is executed just once even if property is used in multipe places
+- property computation is executed just once even if property is used in multiple places
 - property computation can make use of promises (e.g. compute property via API call)
-- views are simplified with `{{ var }}` instead of `{{ computeVar() }}`
+- views are simplified with `{{ prop }}` instead of `{{ computeProp() }}`
 - computed properties are visually separated in controller code
 - definition syntax is consistent with core Angular concepts
 
-Internally, **$computed** is very simple and mostly based on `$watch` ability of Angular Scope. It's just a tiny, clean pattern implementation.
+Internally, **$computed** is very simple and mostly based on Angular's `$watch`. It's just a tiny, clean pattern implementation.
 
 ## Usage
 
@@ -37,7 +37,6 @@ app.controller('AppCtrl', ['$computed', function($computed) {
   // Computed property
   $computed(this, 'sum', ['a', 'b', function(a, b) {
     // You can still use *this* inside computing function
-
     return a + b + this.const;
   }]);
 }]);
@@ -65,7 +64,6 @@ app.controller('AppCtrl', ['$scope', function($scope) {
   // Computed property
   $scope.$computed('sum', ['a', 'b', function(a, b) {
     // Here, *this* refers to your scope
-
     return a + b + this.const;
   }]);
 }]);
@@ -99,7 +97,7 @@ $computed(this, 'sum', [
   computeFunc]);
 ```
 
-Guessing variable names from function signature, like Angular does in its DI, is not supported here. It would not work after minification and could create ugly bugs in your code.
+Guessing dependencies from function signature, like Angular's DI, is not supported. It would not work after minification and could create ugly bugs in your code.
 
 ### Computing the property
 
@@ -107,7 +105,7 @@ Compute function gets called when any of its dependencies change. It takes all d
 
 ```js
 $computed(scope, 'descriptionIsLong', ['description', function(description) {
-  return (description.length > 512);
+  return (description.length > 100);
 }]);
 ```
 
@@ -123,7 +121,7 @@ $computed(scope, 'userName', ['userId', function(userId) {
 
 **$computed** protects your async properties against race conditions. If input changes again before previous promise was resolved, the value returned by that previous promise will never get assigned to the property anymore.
 
-Your `.then()` callbacks will still execute, but there's a way to avoid it - by using a special `$valid` function injected for your convenience by **$computed**:
+Your `then()` callbacks will still execute, but there's a way to avoid it - by using a special `$valid` function injected for your convenience by **$computed**:
 
 ```js
 $computed(scope, 'userName', ['userId', function(userId, $valid) {
@@ -167,7 +165,17 @@ this.a = this.a + 1;
 this.b = this.b - 1;
 ```
 
-The `sum` property will be recomputed due to input change but its result will not change and thus the `sumPow` property will not have to be recomputed.
+The `sum` property will be recomputed due to input change but its result will not change and thus the `sumPow` property will not have to be recomputed. Neat, isn't it?
+
+### Manual recalculation
+
+You may wish to recompute previously defined property on demand, even if none of its dependencies have changed. You can do so like this:
+
+```js
+$computed(this, 'prop').touch();
+```
+
+You could even define a computed property without dependencies and have it computed automatically only once, on scope initialization, and recompute it on demand afterwards. This is not a primary application of **$computed**, but this behavior may prove useful at some point.
 
 ## Contributing
 
