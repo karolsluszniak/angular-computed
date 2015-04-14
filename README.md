@@ -1,5 +1,7 @@
 # angular-computed
 
+[![Bower version](https://img.shields.io/bower/v/angular-computed.svg?style=flat-square)](http://bower.io/)
+
 Computed properties allow to produce efficient and elegant properties that are a result of some calculation dependent on other properties. With **$computed** you get an easy way to define them using pattern similar to Angular's Dependency Injection. Here are some advantages:
 
 - property computation is executed just once after input change
