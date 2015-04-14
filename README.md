@@ -15,10 +15,10 @@ Internally, **$computed** is very simple and mostly based on Angular's `$watch`.
 
 First off, add **angular-computed.js** file to your project. You can download it from [here](https://raw.githubusercontent.com/karolsluszniak/angular-computed/master/angular-computed.js) or require bower `angular-computed` package.
 
-Then, add `ngComputed` as your app's dependency:
+Then, add `cloudless.computed` as your app's dependency:
 
 ```js
-var app = angular.module('app', ['ngComputed']);
+var app = angular.module('app', ['cloudless.computed']);
 ```
 
 **$computed** works both with `controller as` syntax introduced in Angular 1.2 and with explicit `$scope` injected into controllers, services etc.

@@ -1,5 +1,5 @@
 (function() {'use strict';
-  angular.module('ngComputed', [])
+  angular.module('cloudless.computed', [])
 
   .service('$computed', ['$rootScope', '$q', function($rootScope, $q) {
     function touchKey(name) {
